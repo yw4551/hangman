@@ -32,9 +32,12 @@ def get_random_word():
 
 def get_user_guess(guessed_letters):
     while True:
-        user_guess = input("Enter your guess: ").lower()
+        user_guess = input("Enter your guess or 'quit' to quit the game: ").lower()
 
-        if not user_guess.isalpha() or len(user_guess) != 1:
+        if user_guess == "quit":
+            print("Good bye! See you again later.")
+            quit()
+        elif not user_guess.isalpha() or len(user_guess) != 1:
             print("Invalid input: Please enter a single letter.")
         elif user_guess in guessed_letters:
             print("Invalid input: Your tried this num already.")
@@ -51,7 +54,7 @@ def display_result(word, guessed_letters, tries):
         else:
             word_result += "_ "
 
-    return f"Word status: {word_result}\nTry amount left: {tries}\nguessed letters: {' '.join(guessed_letters)}"
+    return f"Word status: {word_result}\nTry amount left: {tries}\nguessed letters: {' '.join(guessed_letters)}\n"
 
 
 def has_win(word, guessed_letters):
@@ -62,16 +65,39 @@ def has_win(word, guessed_letters):
     return True
 
 
+def final_result():
+    pass
+
+
 def main():
     guessed_letters = []
     tries = 8
     user_input = menu()
+
     if user_input == 1:
+        print("Welcome to the hangman game.\nYou have 8 tries lets get started.\n")
         random_word = get_random_word()
-        user_letter_guess = get_user_guess(guessed_letters)
-        guessed_letters.append(user_letter_guess)
-        print(display_result(random_word, guessed_letters, tries))
-        print(has_win(random_word, guessed_letters))
+
+        while tries > 0:
+            print(display_result(random_word, guessed_letters, tries))
+            user_letter_guess = get_user_guess(guessed_letters)
+            guessed_letters.append(user_letter_guess)
+
+            
+            if not user_letter_guess in random_word:
+                print(f"Sorry {user_letter_guess} is not in the word. You have lost a try.")
+                tries -= 1
+            else:
+                print(f"Good job {user_letter_guess} is in the word.")
+                
+                if has_win(random_word, guessed_letters):
+                    break
+
+        print(final_result)
+
+    else:
+        print("Good bye! See you again later.")
+
 
 if __name__ == "__main__":
     main()
