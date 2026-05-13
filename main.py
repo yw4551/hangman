@@ -42,16 +42,16 @@ def get_user_guess(guessed_letters):
             return user_guess
         
 
-def display_word(word, guessed_letters):
-    result = ""
+def display_result(word, guessed_letters, tries):
+    word_result = ""
     
     for char in word:
         if char in guessed_letters:
-            result += f"{char} "
+            word_result += f"{char} "
         else:
-            result += "_ "
+            word_result += "_ "
 
-    return f"Word status: {result}"
+    return f"Word status: {word_result}\nTry amount left: {tries}\nguessed letters: {' '.join(guessed_letters)}"
 
 
 def has_win(word, guessed_letters):
@@ -60,7 +60,7 @@ def has_win(word, guessed_letters):
             return False
 
     return True
-        
+
 
 def main():
     guessed_letters = []
@@ -70,7 +70,7 @@ def main():
         random_word = get_random_word()
         user_letter_guess = get_user_guess(guessed_letters)
         guessed_letters.append(user_letter_guess)
-        print(display_word(random_word, guessed_letters))
+        print(display_result(random_word, guessed_letters, tries))
         print(has_win(random_word, guessed_letters))
 
 if __name__ == "__main__":
