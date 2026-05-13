@@ -44,8 +44,7 @@ def get_user_guess(guessed_letters):
         else:
             return user_guess
         
-
-def display_result(word, guessed_letters, tries):
+def display_word_result(word, guessed_letters):
     word_result = ""
     
     for char in word:
@@ -54,6 +53,10 @@ def display_result(word, guessed_letters, tries):
         else:
             word_result += "_ "
 
+    return word_result
+
+
+def display_result(word_result, guessed_letters, tries):
     return f"Word status: {word_result}\nTry amount left: {tries}\nguessed letters: {' '.join(guessed_letters)}\n"
 
 
@@ -65,8 +68,11 @@ def has_win(word, guessed_letters):
     return True
 
 
-def final_result():
-    pass
+def final_result(has_win, tries, word, word_result):
+    if has_win:
+        return f"Great job you have win this game!\nYou guessed all letters with {tries} tries left.\nThe final word was {word}."
+    else:
+        return f"Sorry you lost this game.\nTry again a different time.\nyou guessed {word_result} out of {word}"
 
 
 def main():
@@ -79,21 +85,25 @@ def main():
         random_word = get_random_word()
 
         while tries > 0:
-            print(display_result(random_word, guessed_letters, tries))
+            word_result = display_word_result(random_word, guessed_letters)
+            print(random_word)
+            print(display_result(word_result, guessed_letters, tries))
             user_letter_guess = get_user_guess(guessed_letters)
             guessed_letters.append(user_letter_guess)
-
             
             if not user_letter_guess in random_word:
                 print(f"Sorry {user_letter_guess} is not in the word. You have lost a try.")
                 tries -= 1
             else:
                 print(f"Good job {user_letter_guess} is in the word.")
-                
-                if has_win(random_word, guessed_letters):
-                    break
 
-        print(final_result)
+                if has_win(random_word, guessed_letters):
+                    final_word_result = display_word_result(random_word, guessed_letters)
+                    print(final_result(True, tries, random_word, final_word_result))
+                    break
+        else:
+            final_word_result = display_word_result(random_word, guessed_letters)
+            print("\n" + final_result(False, tries, random_word, final_word_result))
 
     else:
         print("Good bye! See you again later.")
