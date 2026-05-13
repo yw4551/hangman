@@ -1,5 +1,6 @@
 import random
 
+
 def menu():
     print("\n===================")
     print("   Hang Man Game")
@@ -13,18 +14,37 @@ def menu():
             user_input = int(input("Enter your option (1, 2): "))
             if user_input in [1, 2]:
                 return user_input
-            print('Invalid input. Please enter a valid option (1, 2): ')
+            print("Invalid input. Please enter a valid option (1, 2): ")
         except ValueError:
-            print('Invalid input. Please enter a valid option (1, 2): ')
+            print("Invalid input. Please enter a valid option (1, 2): ")
 
 
 def get_random_word():
     words = [
-        "apple", "algorithm", "backpack", "computer", "cryptography", 
-        "diamond", "elephant", "framework", "galaxy", "hierarchy", 
-        "interface", "journal", "keyboard", "library", "mechanism", 
-        "notebook", "ocean", "puzzling", "rhythm", "strategy", 
-        "universe", "velocity", "weather", "zodiac"
+        "apple",
+        "algorithm",
+        "backpack",
+        "computer",
+        "cryptography",
+        "diamond",
+        "elephant",
+        "framework",
+        "galaxy",
+        "hierarchy",
+        "interface",
+        "journal",
+        "keyboard",
+        "library",
+        "mechanism",
+        "notebook",
+        "ocean",
+        "puzzling",
+        "rhythm",
+        "strategy",
+        "universe",
+        "velocity",
+        "weather",
+        "zodiac",
     ]
 
     return random.choice(words)
@@ -32,7 +52,7 @@ def get_random_word():
 
 def get_user_guess(guessed_letters):
     while True:
-        user_guess = input("Enter your guess or 'quit' to quit the game: ").lower()
+        user_guess = input("Enter your guess or 'quit' to quit: ").lower()
 
         if user_guess == "quit":
             print("Good bye! See you again later.")
@@ -43,10 +63,11 @@ def get_user_guess(guessed_letters):
             print("Invalid input: Your tried this num already.")
         else:
             return user_guess
-        
+
+
 def display_word_result(word, guessed_letters):
     word_result = ""
-    
+
     for char in word:
         if char in guessed_letters:
             word_result += f"{char} "
@@ -86,19 +107,22 @@ def main():
 
         while tries > 0:
             word_result = display_word_result(random_word, guessed_letters)
-            print(random_word)
             print(display_result(word_result, guessed_letters, tries))
             user_letter_guess = get_user_guess(guessed_letters)
             guessed_letters.append(user_letter_guess)
-            
-            if not user_letter_guess in random_word:
-                print(f"Sorry {user_letter_guess} is not in the word. You have lost a try.")
+
+            if user_letter_guess not in random_word:
+                print(
+                    f"Sorry {user_letter_guess} is not in the word. You have lost a try."
+                )
                 tries -= 1
             else:
                 print(f"Good job {user_letter_guess} is in the word.")
 
                 if has_win(random_word, guessed_letters):
-                    final_word_result = display_word_result(random_word, guessed_letters)
+                    final_word_result = display_word_result(
+                        random_word, guessed_letters
+                    )
                     print(final_result(True, tries, random_word, final_word_result))
                     break
         else:
