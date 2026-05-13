@@ -100,28 +100,30 @@ def get_user_guess(guessed_letters):
 
 
 def display_word_result(word, guessed_letters):
-    return " ".join([char if char in guessed_letters else "_" for char in word])
+    return " ".join(char if char in guessed_letters else "_" for char in word)
 
 
-def display_result(word_result, guessed_letters, tries):
-    return f"Word status: {word_result}\nTry amount left: {tries}\nguessed letters: {' '.join(guessed_letters)}\n"
+def display_result(word_result, guessed_letters, tries, score):
+    return f"Word status: {word_result}\nScore: {score}\nTry amount left: {tries}\nguessed letters: {' '.join(guessed_letters)}\n"
 
 
 def has_win(word, guessed_letters):
     return all(char in guessed_letters for char in word)
 
 
-def final_result(has_win, tries, word, word_result):
+def final_result(has_win, tries, word, word_result, score):
     if has_win:
-        return f"Great job you have won this game!\nYou guessed all letters with {tries} tries left.\nThe final word was {word}."
+        return f"Great job you have won this game!\nYou guessed all letters with {tries} tries left and a score of {score}.\nThe final word was {word}."
     else:
-        return f"Sorry you lost this game.\nTry again a different time.\nyou guessed {word_result} out of {word}"
+        return f"Sorry you lost this game.\nTry again a different time.\nyou guessed {word_result} out of {word}. Your score is {score}"
 
 
 def main():
     guessed_letters = []
     tries = MAX_TRIES
+    score = 0
     user_input = menu()
+    streak = 0
 
     if user_input == 1:
         print(
@@ -131,7 +133,7 @@ def main():
 
         while tries > 0:
             word_result = display_word_result(random_word, guessed_letters)
-            print(display_result(word_result, guessed_letters, tries))
+            print(display_result(word_result, guessed_letters, tries, score))
             user_letter_guess = get_user_guess(guessed_letters)
             guessed_letters.append(user_letter_guess)
 
@@ -140,18 +142,29 @@ def main():
                     f"Sorry {user_letter_guess} is not in the word. You have lost a try."
                 )
                 tries -= 1
+                score -= 2
+                streak = 0
             else:
+                score += random_word.count(user_letter_guess) * 5
+                streak += 1
+                if streak >= 2:
+                    score += streak * 2
                 print(f"Good job {user_letter_guess} is in the word.")
 
                 if has_win(random_word, guessed_letters):
                     final_word_result = display_word_result(
                         random_word, guessed_letters
                     )
-                    print(final_result(True, tries, random_word, final_word_result))
+                    score += tries * 5
+                    print(
+                        final_result(True, tries, random_word, final_word_result, score)
+                    )
                     break
         else:
             final_word_result = display_word_result(random_word, guessed_letters)
-            print("\n" + final_result(False, tries, random_word, final_word_result))
+            print(
+                "\n" + final_result(False, tries, random_word, final_word_result, score)
+            )
 
     else:
         print("Good bye! See you again later.")
