@@ -52,6 +52,14 @@ def display_word(word, guessed_letters):
             result += "_ "
 
     return f"Word status: {result}"
+
+
+def has_win(word, guessed_letters):
+    for char in word:
+        if char not in guessed_letters:
+            return False
+
+    return True
         
 
 def main():
@@ -63,6 +71,7 @@ def main():
         user_letter_guess = get_user_guess(guessed_letters)
         guessed_letters.append(user_letter_guess)
         print(display_word(random_word, guessed_letters))
+        print(has_win(random_word, guessed_letters))
 
 if __name__ == "__main__":
     main()
