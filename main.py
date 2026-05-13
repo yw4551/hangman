@@ -42,11 +42,27 @@ def get_user_guess(guessed_letters):
             return user_guess
         
 
+def display_word(word, guessed_letters):
+    result = ""
+    
+    for char in word:
+        if char in guessed_letters:
+            result += f"{char} "
+        else:
+            result += "_ "
+
+    return f"Word status: {result}"
+        
+
 def main():
+    guessed_letters = []
+    tries = 8
     user_input = menu()
     if user_input == 1:
         random_word = get_random_word()
-        user_letter_guess = get_user_guess(random_word)
+        user_letter_guess = get_user_guess(guessed_letters)
+        guessed_letters.append(user_letter_guess)
+        print(display_word(random_word, guessed_letters))
 
 if __name__ == "__main__":
     main()
