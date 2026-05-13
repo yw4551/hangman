@@ -29,11 +29,24 @@ def get_random_word():
 
     return random.choice(words)
 
+
+def get_user_guess(guessed_letters):
+    while True:
+        user_guess = input("Enter your guess: ").lower()
+
+        if not user_guess.isalpha() or len(user_guess) != 1:
+            print("Invalid input: Please enter a single letter.")
+        elif user_guess in guessed_letters:
+            print("Invalid input: Your tried this num already.")
+        else:
+            return user_guess
+        
+
 def main():
     user_input = menu()
     if user_input == 1:
         random_word = get_random_word()
-        print(random_word)
+        user_letter_guess = get_user_guess(random_word)
 
 if __name__ == "__main__":
     main()
