@@ -1,9 +1,12 @@
 import random
+import sys
+
+MAX_TRIES = 8
 
 
 def menu():
     print("\n===================")
-    print("   Hang Man Game")
+    print("=  Hang Man Game  =")
     print("===================\n")
     print("Welcome! Are you ready to start playing?")
     while True:
@@ -20,34 +23,65 @@ def menu():
 
 
 def get_random_word():
-    words = [
-        "apple",
-        "algorithm",
-        "backpack",
-        "computer",
-        "cryptography",
-        "diamond",
-        "elephant",
-        "framework",
-        "galaxy",
-        "hierarchy",
-        "interface",
-        "journal",
-        "keyboard",
-        "library",
-        "mechanism",
-        "notebook",
-        "ocean",
-        "puzzling",
-        "rhythm",
-        "strategy",
-        "universe",
-        "velocity",
-        "weather",
-        "zodiac",
-    ]
+    word_categories = {
+        "animals": [
+            "elephant",
+            "giraffe",
+            "kangaroo",
+            "dolphin",
+            "penguin",
+            "cheetah",
+            "octopus",
+            "crocodile",
+            "squirrel",
+            "butterfly",
+        ],
+        "countries": [
+            "argentina",
+            "brazil",
+            "canada",
+            "denmark",
+            "egypt",
+            "france",
+            "germany",
+            "hungary",
+            "italy",
+            "japan",
+        ],
+        "fruits": [
+            "apple",
+            "banana",
+            "cherry",
+            "strawberry",
+            "elderberry",
+            "fig",
+            "grapefruit",
+            "honeydew",
+            "kiwi",
+            "lemon",
+        ],
+        "professions": [
+            "architect",
+            "baker",
+            "carpenter",
+            "dentist",
+            "engineer",
+            "farmer",
+            "geologist",
+            "hairdresser",
+            "illustrator",
+            "judge",
+        ],
+    }
 
-    return random.choice(words)
+    while True:
+        cat_choice = input(
+            "Please enter a category from the list (Animals, Countries, Fruits, Professions):"
+        ).lower()
+        if cat_choice in word_categories:
+            print(f"Your choice is to play the {cat_choice}, Let's go.")
+            return random.choice(word_categories[cat_choice])
+        print("Invalid input: Please enter a category from the list")
 
 
 def get_user_guess(guessed_letters):
@@ -56,25 +90,17 @@ def get_user_guess(guessed_letters):
 
         if user_guess == "quit":
             print("Good bye! See you again later.")
-            quit()
+            sys.exit()
         elif not user_guess.isalpha() or len(user_guess) != 1:
             print("Invalid input: Please enter a single letter.")
         elif user_guess in guessed_letters:
-            print("Invalid input: Your tried this num already.")
+            print("Invalid input: Your tried this letter already.")
         else:
             return user_guess
 
 
 def display_word_result(word, guessed_letters):
-    word_result = ""
-
-    for char in word:
-        if char in guessed_letters:
-            word_result += f"{char} "
-        else:
-            word_result += "_ "
-
-    return word_result
+    return " ".join([char if char in guessed_letters else "_" for char in word])
 
 
 def display_result(word_result, guessed_letters, tries):
@@ -82,27 +108,25 @@ def display_result(word_result, guessed_letters, tries):
 
 
 def has_win(word, guessed_letters):
-    for char in word:
-        if char not in guessed_letters:
-            return False
-
-    return True
+    return all(char in guessed_letters for char in word)
 
 
 def final_result(has_win, tries, word, word_result):
     if has_win:
-        return f"Great job you have win this game!\nYou guessed all letters with {tries} tries left.\nThe final word was {word}."
+        return f"Great job you have won this game!\nYou guessed all letters with {tries} tries left.\nThe final word was {word}."
     else:
         return f"Sorry you lost this game.\nTry again a different time.\nyou guessed {word_result} out of {word}"
 
 
 def main():
     guessed_letters = []
-    tries = 8
+    tries = MAX_TRIES
     user_input = menu()
 
     if user_input == 1:
-        print("Welcome to the hangman game.\nYou have 8 tries lets get started.\n")
+        print(
+            f"Welcome to the hangman game.\nYou have {MAX_TRIES} tries lets get started.\n"
+        )
         random_word = get_random_word()
 
         while tries > 0:
