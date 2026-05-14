@@ -49,8 +49,8 @@ def get_user_guess(guessed_letters):
             return user_guess
 
 
-def display_word_result(word, guessed_letters):
-    return " ".join(char if char in guessed_letters else "_" for char in word)
+def display_word_result(word, correct_letters):
+    return " ".join(char if char in correct_letters else "_" for char in word)
 
 
 def display_result(word_result, guessed_letters, tries, score):
@@ -70,6 +70,7 @@ def final_result(has_win, tries, word, word_result, score):
 
 def main():
     guessed_letters = []
+    correct_letters = []
     tries = MAX_TRIES
     score = 0
     user_input = menu()
@@ -82,28 +83,29 @@ def main():
         random_word = get_random_word()
 
         while tries > 0:
-            word_result = display_word_result(random_word, guessed_letters)
+            word_result = display_word_result(random_word, correct_letters)
             print(display_result(word_result, guessed_letters, tries, score))
             user_letter_guess = get_user_guess(guessed_letters)
-            guessed_letters.append(user_letter_guess)
 
             if user_letter_guess not in random_word:
                 print(
                     f"Sorry {user_letter_guess} is not in the word. You have lost a try."
                 )
+                guessed_letters.append(user_letter_guess)
                 tries -= 1
                 score -= 2
                 streak = 0
             else:
+                correct_letters.append(user_letter_guess)
                 score += random_word.count(user_letter_guess) * 5
                 streak += 1
                 if streak >= 2:
                     score += streak * 2
                 print(f"Good job {user_letter_guess} is in the word.")
 
-                if has_win(random_word, guessed_letters):
+                if has_win(random_word, correct_letters):
                     final_word_result = display_word_result(
-                        random_word, guessed_letters
+                        random_word, correct_letters
                     )
                     score += tries * 5
                     print(
@@ -111,7 +113,7 @@ def main():
                     )
                     break
         else:
-            final_word_result = display_word_result(random_word, guessed_letters)
+            final_word_result = display_word_result(random_word, correct_letters)
             print(
                 "\n" + final_result(False, tries, random_word, final_word_result, score)
             )
