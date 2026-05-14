@@ -23,7 +23,15 @@ def menu():
             print("Invalid input. Please enter a valid option (1, 2): ")
 
 
+def start_game():
+    print(
+        f"Welcome to the hangman game.\nYou have {MAX_TRIES} tries lets get started.\n"
+    )
+    return get_random_word()
+
+
 def get_random_word():
+    # the words are stored in data.py
     while True:
         cat_choice = input(
             "Please enter a category from the list (Animals, Countries, Fruits, Professions):"
@@ -34,19 +42,62 @@ def get_random_word():
         print("Invalid input: Please enter a category from the list")
 
 
-def get_user_guess(guessed_letters):
+def get_user_guess(guessed_letters, correct_letters):
     while True:
         user_guess = input("Enter your guess or 'quit' to quit: ").lower()
 
         if user_guess == "quit":
             print("Good bye! See you again later.")
             sys.exit()
-        elif not (user_guess.isalpha() and user_guess.isascii()) or len(user_guess) != 1:
+        elif (
+            not (user_guess.isalpha() and user_guess.isascii()) or len(user_guess) != 1
+        ):
             print("Invalid input: Please enter a single letter.")
-        elif user_guess in guessed_letters:
+        elif user_guess in guessed_letters or user_guess in correct_letters:
             print("Invalid input: Your tried this letter already.")
         else:
             return user_guess
+
+
+def handel_wrong_letter(user_letter_guess, guessed_letters, score, tries, streak):
+    print(f"Sorry {user_letter_guess} is not in the word. You have lost a try.")
+    guessed_letters.append(user_letter_guess)
+    tries -= 1
+    score -= 2
+    streak = 0
+
+    return tries, score, streak
+
+
+def handel_correct_answer(
+    correct_letters, user_letter_guess, random_word, score, streak
+):
+    correct_letters.append(user_letter_guess)
+    score += random_word.count(user_letter_guess) * 5
+    streak += 1
+
+    if streak >= 2:
+        score += streak * 2
+    print(f"Good job {user_letter_guess} is in the word.")
+
+    return score, streak
+
+
+def play_turn(random_word, correct_letters, guessed_letters, tries, score, streak):
+    word_result = display_word_result(random_word, correct_letters)
+    print(display_result(word_result, guessed_letters, tries, score))
+    user_letter_guess = get_user_guess(guessed_letters, correct_letters)
+
+    if user_letter_guess not in random_word:
+        tries, score, streak = handel_wrong_letter(
+            user_letter_guess, guessed_letters, score, tries, streak
+        )
+    else:
+        score, streak = handel_correct_answer(
+            correct_letters, user_letter_guess, random_word, score, streak
+        )
+
+    return tries, score, streak
 
 
 def display_word_result(word, correct_letters):
@@ -68,58 +119,41 @@ def final_result(has_win, tries, word, word_result, score):
         return f"Sorry you lost this game.\nTry again a different time.\nyou guessed {word_result} out of {word}. Your score is {score}"
 
 
+def win_result(random_word, correct_letters, tries, score):
+    final_word_result = display_word_result(random_word, correct_letters)
+    score += tries * 5
+    print(final_result(True, tries, random_word, final_word_result, score))
+
+
+def lost_result(random_word, correct_letters, tries, score):
+    final_word_result = display_word_result(random_word, correct_letters)
+    print("\n" + final_result(False, tries, random_word, final_word_result, score))
+
+
 def main():
     guessed_letters = []
     correct_letters = []
     tries = MAX_TRIES
     score = 0
-    user_input = menu()
     streak = 0
+    user_input = menu()
 
-    if user_input == 1:
-        print(
-            f"Welcome to the hangman game.\nYou have {MAX_TRIES} tries lets get started.\n"
+    if user_input == 2:
+        print("Good bye! See you later.")
+        return
+
+    random_word = start_game()
+
+    while tries > 0:
+        tries, score, streak = play_turn(
+            random_word, correct_letters, guessed_letters, tries, score, streak
         )
-        random_word = get_random_word()
 
-        while tries > 0:
-            word_result = display_word_result(random_word, correct_letters)
-            print(display_result(word_result, guessed_letters, tries, score))
-            user_letter_guess = get_user_guess(guessed_letters)
-
-            if user_letter_guess not in random_word:
-                print(
-                    f"Sorry {user_letter_guess} is not in the word. You have lost a try."
-                )
-                guessed_letters.append(user_letter_guess)
-                tries -= 1
-                score -= 2
-                streak = 0
-            else:
-                correct_letters.append(user_letter_guess)
-                score += random_word.count(user_letter_guess) * 5
-                streak += 1
-                if streak >= 2:
-                    score += streak * 2
-                print(f"Good job {user_letter_guess} is in the word.")
-
-                if has_win(random_word, correct_letters):
-                    final_word_result = display_word_result(
-                        random_word, correct_letters
-                    )
-                    score += tries * 5
-                    print(
-                        final_result(True, tries, random_word, final_word_result, score)
-                    )
-                    break
-        else:
-            final_word_result = display_word_result(random_word, correct_letters)
-            print(
-                "\n" + final_result(False, tries, random_word, final_word_result, score)
-            )
-
+        if has_win(random_word, correct_letters):
+            win_result(random_word, correct_letters, tries, score)
+            break
     else:
-        print("Good bye! See you again later.")
+        lost_result(random_word, correct_letters, tries, score)
 
 
 if __name__ == "__main__":
