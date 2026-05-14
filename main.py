@@ -1,5 +1,6 @@
 import random
 import sys
+from data import word_categories
 
 MAX_TRIES = 8
 
@@ -23,57 +24,6 @@ def menu():
 
 
 def get_random_word():
-    word_categories = {
-        "animals": [
-            "elephant",
-            "giraffe",
-            "kangaroo",
-            "dolphin",
-            "penguin",
-            "cheetah",
-            "octopus",
-            "crocodile",
-            "squirrel",
-            "butterfly",
-        ],
-        "countries": [
-            "argentina",
-            "brazil",
-            "canada",
-            "denmark",
-            "egypt",
-            "france",
-            "germany",
-            "hungary",
-            "italy",
-            "japan",
-        ],
-        "fruits": [
-            "apple",
-            "banana",
-            "cherry",
-            "strawberry",
-            "elderberry",
-            "fig",
-            "grapefruit",
-            "honeydew",
-            "kiwi",
-            "lemon",
-        ],
-        "professions": [
-            "architect",
-            "baker",
-            "carpenter",
-            "dentist",
-            "engineer",
-            "farmer",
-            "geologist",
-            "hairdresser",
-            "illustrator",
-            "judge",
-        ],
-    }
-
     while True:
         cat_choice = input(
             "Please enter a category from the list (Animals, Countries, Fruits, Professions):"
@@ -91,7 +41,7 @@ def get_user_guess(guessed_letters):
         if user_guess == "quit":
             print("Good bye! See you again later.")
             sys.exit()
-        elif not user_guess.isalpha() or len(user_guess) != 1:
+        elif not (user_guess.isalpha() and user_guess.isascii()) or len(user_guess) != 1:
             print("Invalid input: Please enter a single letter.")
         elif user_guess in guessed_letters:
             print("Invalid input: Your tried this letter already.")
